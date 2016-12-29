@@ -7,9 +7,12 @@ import numpy as np
 
 print "Hello"
 
-k = 10000
+pole_per = 5.6
+pole_rad = pole_per / np.pi / 2
+
 #k2 = 10
 h = 10000
+k = h / pole_rad
 
 def from_rad_to_xy( rad, alpha ):
     r_a = zip(rad, alpha)
@@ -35,20 +38,23 @@ def hor_bounds( k, h ):
 
     return from_rad_to_xy(rplane, alpha_plane)
 
-#def bounds( h0, h1 ):
-#    x =
+ysize = pole_per
+sm_to_inches = 1/2.54
+my_dpi = 100
+plt.figure( figsize=(pole_per * sm_to_inches, ysize * sm_to_inches), dpi=my_dpi)
 
-x1, y1 = sec( k, 0.5, h )
-plt.plot(x1, y1)
+def add_sec( plt, h, angle, col, w ):
+    x1, y1 = sec( k, np.tan( angle / 180.0 * np.pi), h )
+    lines = plt.plot(x1, y1)
+    plt.setp(lines, color=col, linewidth=w)
 
-x2, y2 = sec( k, 1, h )
-plt.plot(x2, y2)
-
-x3, y3 = sec( k, 0.0, h )
-plt.plot(x3, y3)
-
-x4, y4 = sec( k, np.sqrt(3), h )
-plt.plot(x4, y4)
+step = 0.5
+off = 1.2
+add_sec( plt, h+off       , 24, '#156526', 1)
+add_sec( plt, h+off-step*1, 30, '#F96161', 2)
+add_sec( plt, h+off-step*2, 34, '#FF7400', 1)
+add_sec( plt, h+off-step*3, 38, 'r', 1)
+add_sec( plt, h+off-step*4, 42, 'b', 1)
 
 hor_x_0, hor_y_0 = hor_bounds( k, h - 2 )
 plt.plot(hor_x_0, hor_y_0)
@@ -59,7 +65,10 @@ plt.plot(hor_x_1, hor_y_1)
 plt.xlabel('time (s)')
 plt.ylabel('voltage (mV)')
 plt.title('About as simple as it gets, folks')
-plt.grid(True)
-plt.ylim( [h - 3, h+ 3] )
-plt.savefig("G:\\test.png")
+#plt.grid(True)
+
+plt.ylim( [h - ysize/2, h+ ysize/2] )
+plt.xlim( [ - pole_per/2, pole_per/2 ] )
+
+plt.savefig("G:\\test.png", dpi=600)
 plt.show()
